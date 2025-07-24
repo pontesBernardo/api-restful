@@ -38,8 +38,6 @@ export async function getUser(req, res) {
   try {
     const { email, password } = req.body;
 
-    console.log('login attempt', { email, password })
-
     if (!email || !password) {
       return res
         .status(400)
@@ -49,25 +47,21 @@ export async function getUser(req, res) {
     const user = await prisma.user.findUnique({
       where: { email },
     });
-    console.log('user fetched from db:', user)
 
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log('password valid:', isPasswordValid)
 
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password." });
     }
 
     const token = generateToken({ id: user.id, email: user.email });
-    console.log('token', token  )
 
     res.json({ token, user: { id: user.id, email: user.email } });
   } catch (err) {
-    console.error("Error in getUser:", err);
     res.status(500).json({ error: "Something went wrong! Try again" });
   }
 }
