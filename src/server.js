@@ -1,12 +1,17 @@
 import express from "express";
+import dotenv from "dotenv";
 import userRouter from "./routes/user.routes.js";
+
+dotenv.config();
+
+import { authMiddleware } from "./auth.js";
 
 const app = express();
 
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello, world!");
+  res.send("Home, publica");
 });
 
 app.use("/user", userRouter);

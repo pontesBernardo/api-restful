@@ -1,20 +1,22 @@
 import express, { Router } from "express";
+import { authMiddleware } from "../auth.js";
 import {
   createUser,
-  deleteUser,
-  getUserById,
-  getUserByName,
   getUsers,
-  updateUser,
+  getUser,
 } from "../controllers/user.controller.js";
 
-const router = Router();
+const router = express.Router();
 
-router.post("/create", createUser);
-router.get("/all", getUsers);
-router.get("/:id", getUserById);
-router.get("/search/by-name", getUserByName);
-router.delete("/:id", deleteUser);
-router.put("/:id", updateUser);
+//Publicas
+router.post("/register", createUser);
+router.post("/login", getUser);
+
+//Privadas
+router.get("/dashboard", authMiddleware, (req, res) => {
+  res.json({ message: `Bem vindo ${req.user.email}` });
+});
+
+router.get("/users", authMiddleware, getUsers);
 
 export default router;
